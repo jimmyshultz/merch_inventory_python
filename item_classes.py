@@ -48,7 +48,7 @@ class MerchCollection:
         """Show the name and quantity of all items on hand in the collection."""
         print("The items currently on hand are: ")
         for item in self.merch_items:
-            print(item)
+            item.display_details()
     
     def _get_item(self, item_name):
         """Takes a merch item name and returns the corresponding object form the list"""
@@ -145,8 +145,8 @@ class Item:
         self.item_type = "misc"
 
     def display_details(self):
-        print(f"Name: {self.name} \nAmount on hand: {self.quantity} "
-              f"\nPrice: {self.price}")
+        print(f"\n{self.name} \n\tPrice: {self.price} "
+              f"\n\tAmount on hand: {self.quantity}")
         
     def __str__(self):
         """
@@ -162,8 +162,10 @@ class Shirt(Item):
         self.item_type = "shirt"
 
     def display_details(self):
-        print(f"Name: {self.name} \nAmount on hand: {self.quantity} "
-              f"\nPrice: {self.price}")
+        print(f"\n{self.name} \n\tPrice: {self.price}")
+        print("\tAmount on hand: ")
+        for key, value in self.quantity.items():
+            print(f"\t\t{key} - {value}")
         
     def __str__(self):
         """
