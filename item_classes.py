@@ -4,11 +4,29 @@ class MerchCollection:
         self.merch_items = []
 
     #Generic Item Functions
+    def add_item_menu(self):
+        """Display available operations to the user"""
+        print("Enter 'sh' to add a shirt "
+              "\n'h' to add a hat "
+              "\n'st' to add a sticker "
+              "\n'cd' to add a CD "
+              "\n'v' to add a vinyl "
+              "\n'm' to add a miscellaneous item")
+
     def add_item(self):
         """Create a new merch item and add it to the list of items in the collection."""
-        item_type = str(input("Is this item a shirt? (y/n) "))
-        if item_type == "y":
+        self.add_item_menu()
+        item_type = str(input("What type of item do you want to add? "))
+        if item_type == "sh":
             self.add_shirt()
+        elif item_type == 'h':
+            self.add_hat()
+        elif item_type == 'st':
+            self.add_sticker()
+        elif item_type == 'cd':
+            self.add_cd()
+        elif item_type == 'v':
+            self.add_vinyl()
         else:
             name = str(input("What is the name of the merch item you want to add? "))
             price = float(input("How much does this cost? "))
@@ -95,6 +113,44 @@ class MerchCollection:
         else:
             print("Couldn't find that size.  Please select another.")
 
+    
+    #Functions to add other item classes
+    def add_hat(self):
+        name = str(input("What is the name of the hat you want to add? "))
+        price = float(input("How much does this cost? "))
+        quantity = int(input("How many are currently in stock? "))
+        new_item = str(name)
+        new_item = Hat(name, price, quantity)
+        self.merch_items.append(new_item)
+        print(f"{name} has been added to the merch collection")
+
+    def add_sticker(self):
+        name = str(input("What is the name of the sticker you want to add? "))
+        price = float(input("How much does this cost? "))
+        quantity = int(input("How many are currently in stock? "))
+        new_item = str(name)
+        new_item = Sticker(name, price, quantity)
+        self.merch_items.append(new_item)
+        print(f"{name} has been added to the merch collection")
+
+    def add_cd(self):
+        name = str(input("What is the name of the CD you want to add? "))
+        price = float(input("How much does this cost? "))
+        quantity = int(input("How many are currently in stock? "))
+        new_item = str(name)
+        new_item = CD(name, price, quantity)
+        self.merch_items.append(new_item)
+        print(f"{name} has been added to the merch collection")
+
+    def add_vinyl(self):
+        name = str(input("What is the name of the Vinyl you want to add? "))
+        price = float(input("How much does this cost? "))
+        quantity = int(input("How many are currently in stock? "))
+        new_item = str(name)
+        new_item = Vinyl(name, price, quantity)
+        self.merch_items.append(new_item)
+        print(f"{name} has been added to the merch collection")
+
 
     #Driver functions        
     def menu(self):
@@ -173,3 +229,23 @@ class Shirt(Item):
         whenever the object is printed to the console.
         """
         return f"\t{self.name}: {self.quantity}"
+    
+class Hat(Item):
+    def __init__(self, name, price, quantity):
+        super().__init__(name, price, quantity)
+        self.item_type = "hat"
+
+class Sticker(Item):
+    def __init__(self, name, price, quantity):
+        super().__init__(name, price, quantity)
+        self.item_type = "sticker"
+
+class CD(Item):
+    def __init__(self, name, price, quantity):
+        super().__init__(name, price, quantity)
+        self.item_type = "cd"
+
+class Vinyl(Item):
+    def __init__(self, name, price, quantity):
+        super().__init__(name, price, quantity)
+        self.item_type = "vinyl"
