@@ -1,3 +1,5 @@
+import json
+
 #Merch Collection Class
 class MerchCollection:
     def __init__(self):
@@ -152,6 +154,20 @@ class MerchCollection:
         print(f"{name} has been added to the merch collection")
 
 
+    #File Handling
+    def open_file(self):
+        pass
+
+    def save_file(self):
+        fileroot = input("What would you like to name this merch collection? ")
+        filename = f"{fileroot}.json"
+
+        with open(filename, 'w') as file_object:
+            for item in self.merch_items:
+                item_json = item.to_json()
+                json.dump(item_json, file_object)
+
+
     #Driver functions        
     def menu(self):
         """Display available operations to the user"""
@@ -178,6 +194,7 @@ class MerchCollection:
     
             if choice == 'q':
                 print("Quitting.")
+                self.save_file()
                 break
             elif choice == 's':
                 self.show_items()
@@ -203,6 +220,10 @@ class Item:
     def display_details(self):
         print(f"\n{self.name} \n\tPrice: {self.price} "
               f"\n\tAmount on hand: {self.quantity}")
+        
+    def to_json(self):
+        """Convert the instance of this class to json."""
+        return json.dumps(self, indent = 4, default=lambda o: o.__dict__)
         
     def __str__(self):
         """
