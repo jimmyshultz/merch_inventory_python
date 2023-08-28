@@ -1,4 +1,5 @@
-import json
+import pickle
+
 
 #Merch Collection Class
 class MerchCollection:
@@ -156,16 +157,41 @@ class MerchCollection:
 
     #File Handling
     def open_file(self):
-        pass
+        open_file_choice = input("Would you like to open a merch collection "
+                                 "you've previously saved? (y/n) ")
+        open_file_choice = open_file_choice.lower()
+        if open_file_choice == 'y':
+            fileroot = input("What merch collection would you like to load? ")
+            fileroot = fileroot.replace(" ", "")
+            fileroot = fileroot.lower()
+            filename = f"{fileroot}.pkl"
+    
+            try:
+                with open(filename, "rb") as f:
+                    while True:
+                        try:
+                            self.merch_items.append(pickle.load(f))
+                        except EOFError:
+                            break
+            except FileNotFoundError:
+                    print(f"Sorry, the file {filename} does not exist."
+                          f"\n Quit and try again or begin a new collection.")
+
+
 
     def save_file(self):
-        fileroot = input("What would you like to name this merch collection? ")
-        filename = f"{fileroot}.json"
-
-        with open(filename, 'w') as file_object:
-            for item in self.merch_items:
-                item_json = item.to_json()
-                json.dump(item_json, file_object)
+        save_file_choice = input("Would you like to save this merch collection? (y/n) ")
+        save_file_choice = save_file_choice.lower()
+        if save_file_choice == 'y':
+            fileroot = input("What would you like to name this merch collection? ")
+            fileroot = fileroot.replace(" ", "")
+            fileroot = fileroot.lower()
+            filename = f"{fileroot}.pkl"
+    
+            with open(filename, 'wb') as file_object:
+                for item in self.merch_items:
+                    pickle.dump(item, file_object)
+                    print(f"Object successfully saved to '{filename}'")
 
 
     #Driver functions        
@@ -185,6 +211,8 @@ class MerchCollection:
         and increasing and reducing inventory of items.  Perform this continously
         until the user decides to stop.
         """
+
+        self.open_file()
 
         while True:
 
@@ -220,10 +248,6 @@ class Item:
     def display_details(self):
         print(f"\n{self.name} \n\tPrice: {self.price} "
               f"\n\tAmount on hand: {self.quantity}")
-        
-    def to_json(self):
-        """Convert the instance of this class to json."""
-        return json.dumps(self, indent = 4, default=lambda o: o.__dict__)
         
     def __str__(self):
         """
