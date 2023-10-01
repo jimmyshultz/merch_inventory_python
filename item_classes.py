@@ -74,7 +74,7 @@ class MerchCollection:
     def _get_item(self, item_name):
         """Takes a merch item name and returns the corresponding object form the list"""
         for item in self.merch_items:
-            if item.name == item_name:
+            if item.name.lower() == item_name.lower():
                 return item
 
 
