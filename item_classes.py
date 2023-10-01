@@ -19,7 +19,7 @@ class MerchCollection:
     def add_item(self):
         """Create a new merch item and add it to the list of items in the collection."""
         self.add_item_menu()
-        item_type = str(input("What type of item do you want to add? "))
+        item_type = self._request_item_type("add")
         if item_type == "sh":
             self.add_shirt()
         elif item_type == 'h':
@@ -31,9 +31,9 @@ class MerchCollection:
         elif item_type == 'v':
             self.add_vinyl()
         else:
-            name = str(input("What is the name of the merch item you want to add? "))
-            price = float(input("How much does this cost? "))
-            quantity = int(input("How many are currently in stock? "))
+            name = self._request_item_name("add")
+            price = self._request_item_price("add")
+            quantity = self._request_num_of_items("add")
             new_item = str(name)
             new_item = Item(name, price, quantity)
             self.merch_items.append(new_item)
@@ -41,28 +41,28 @@ class MerchCollection:
 
     def remove_item(self):
         """Remove an item from the merch collection."""
-        merch_item = str(input("What item should be removed from the collection? "))
+        merch_item = self._request_item_name("remove")
         item = self._get_item(merch_item)
         self.merch_items.remove(item)
         
     def decrease_inventory(self):
         """Sell a given amount of an item."""
-        merch_item = str(input("What item is being sold? "))
+        merch_item = self._request_item_name("decrease")
         item = self._get_item(merch_item)
         if item.item_type == "shirt":
             self.decrease_shirt_inventory(item)
         else:
-            num_sold = int(input("How many are being sold? "))
+            num_sold = self._request_num_of_items("decrease")
             item.quantity -= num_sold
 
     def increase_inventory(self):
         """Increase the quantity of an item on hand by a given amount."""
-        merch_item = str(input("What item's quantity on hand has increased? "))
+        merch_item = self._request_item_name("increase")
         item = self._get_item(merch_item)
         if item.item_type == "shirt":
             self.increase_shirt_inventory(item)
         else:
-            num_new_items = int(input("How many are being added? "))
+            num_new_items = self._request_num_of_items("increase")
             item.quantity += num_new_items
 
     def show_items(self):
@@ -76,6 +76,41 @@ class MerchCollection:
         for item in self.merch_items:
             if item.name.lower() == item_name.lower():
                 return item
+            
+    #User Input Functions
+    def _request_item_name(self, function):
+        """Get user input on the name of the item they want to deal with."""
+        if function == "remove":
+            merch_item = str(input("What item should be removed from the collection? "))
+        elif function == "increase":
+            merch_item = str(input("What item's quantity on hand has increased? "))
+        elif function == "decrease":
+            merch_item = str(input("What item is being sold? "))
+        elif function == "add":
+            merch_item = str(input("What is the name of the merch item you want to add? "))
+        return merch_item
+    
+    def _request_num_of_items(self, function):
+        """Get user input on how many items the user wants to deal with."""
+        if function == "increase":
+            num_of_items = int(input("How many are being added? "))
+        elif function == "decrease":
+            num_of_items = int(input("How many are being sold? "))
+        elif function == "add":
+            num_of_items = int(input("How many are currently in stock? "))
+        return num_of_items
+    
+    def _request_item_type(self, function):
+        """Get user input on what type of item they want to deal with."""
+        if function == "add":
+            item_type = str(input("What type of item do you want to add? "))
+        return item_type
+
+    def _request_item_price(self, function):
+        """Get user input on what the price is of the item they want to deal with."""
+        if function == "add":
+            item_price = float(input("How much does this cost? "))
+        return item_price
 
 
     #Shirt Specific Functions
@@ -85,15 +120,9 @@ class MerchCollection:
         Use a dictionary for the quantity of specific sizes
         """
 
-        name = str(input("What is the name of the shirt you want to add? "))
-        price = float(input("How much does this cost? "))
-        sizes = str(input("Please enter the sizes available separated by commas (ex. 'sm, md, lg'): "))
-        sizes = sizes.split(", ")
-        quantity_by_size = []
-        for size in sizes:
-            quantity = int(input(f"How many shirts do you have in size {size}? "))
-            quantity_by_size.append(quantity)
-        quantity_dict = {sizes[i]: quantity_by_size[i] for i in range(len(sizes))}
+        name = self._request_shirt_name("add")
+        price = self._request_item_price("add")
+        quantity_dict = self._request_shirt_sizes("add")
         new_shirt = str(name)
         new_shirt = Shirt(name, price, quantity_dict)
         self.merch_items.append(new_shirt)
@@ -101,54 +130,80 @@ class MerchCollection:
 
     def decrease_shirt_inventory(self, shirt):
         """Decrease the inventory of one size of a shirt in the collection."""
-        size_sold = str(input("What size shirt is being sold? "))
-        num_sold = int(input("How many are being sold? "))
+        size_sold = self._request_shirt_sizes("decrease")
+        num_sold = self._request_num_of_items("decrease")
         if size_sold in shirt.quantity.keys():
             shirt.quantity[size_sold] -= num_sold
         else:
             print("Couldn't find that size.  Please select another.")
 
     def increase_shirt_inventory(self, shirt):
-        size_added = str(input("What size shirt is being added? "))
-        num_added = int(input("How many are being added? "))
+        size_added = self._request_shirt_sizes("increase")
+        num_added = self._request_num_of_items("increase")
         if size_added in shirt.quantity.keys():
             shirt.quantity[size_added] += num_added
         else:
             print("Couldn't find that size.  Please select another.")
 
+    #Shirt Specific User Input Functions
+    def _request_shirt_name(self, function):
+        """Get user input on the name of the item they want to deal with."""
+        if function == "add":
+            merch_item = str(input("What is the name of the shirt you want to add? "))
+        return merch_item
+    
+    def _request_shirt_sizes(self, function):
+        """Get user input on what sizes of shirt they want to deal with"""
+        if function == "add":
+            sizes = str(input("Please enter the sizes available separated by commas (ex. 'sm, md, lg'): "))
+            sizes = sizes.split(", ")
+            quantity_by_size = []
+            for size in sizes:
+                quantity = int(input(f"How many shirts do you have in size {size}? "))
+                quantity_by_size.append(quantity)
+            quantity_dict = {sizes[i]: quantity_by_size[i] for i in range(len(sizes))}
+            return quantity_dict
+        elif function == "decrease":
+            size_sold = str(input("What size shirt is being sold? "))
+            return size_sold
+        elif function == "increase":
+            size_added = str(input("What size shirt is being added? "))
+            return size_added
+
+
     
     #Functions to add other item classes
     def add_hat(self):
-        name = str(input("What is the name of the hat you want to add? "))
-        price = float(input("How much does this cost? "))
-        quantity = int(input("How many are currently in stock? "))
+        name = self._request_item_name("add")
+        price = self._request_item_price("add")
+        quantity = self._request_num_of_items("add")
         new_item = str(name)
         new_item = Hat(name, price, quantity)
         self.merch_items.append(new_item)
         print(f"{name} has been added to the merch collection")
 
     def add_sticker(self):
-        name = str(input("What is the name of the sticker you want to add? "))
-        price = float(input("How much does this cost? "))
-        quantity = int(input("How many are currently in stock? "))
+        name = self._request_item_name("add")
+        price = self._request_item_price("add")
+        quantity = self._request_num_of_items("add")
         new_item = str(name)
         new_item = Sticker(name, price, quantity)
         self.merch_items.append(new_item)
         print(f"{name} has been added to the merch collection")
 
     def add_cd(self):
-        name = str(input("What is the name of the CD you want to add? "))
-        price = float(input("How much does this cost? "))
-        quantity = int(input("How many are currently in stock? "))
+        name = self._request_item_name("add")
+        price = self._request_item_price("add")
+        quantity = self._request_num_of_items("add")
         new_item = str(name)
         new_item = CD(name, price, quantity)
         self.merch_items.append(new_item)
         print(f"{name} has been added to the merch collection")
 
     def add_vinyl(self):
-        name = str(input("What is the name of the Vinyl you want to add? "))
-        price = float(input("How much does this cost? "))
-        quantity = int(input("How many are currently in stock? "))
+        name = self._request_item_name("add")
+        price = self._request_item_price("add")
+        quantity = self._request_num_of_items("add")
         new_item = str(name)
         new_item = Vinyl(name, price, quantity)
         self.merch_items.append(new_item)
